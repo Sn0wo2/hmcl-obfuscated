@@ -25,8 +25,8 @@ type PrivateData struct {
 	Extra        jsontext.Value `json:",embed"`
 }
 
-func (a Account) Encrypt() (*EnvelopeV1, error) {
-	plain, err := json.Marshal([]Account{a})
+func Encrypt(accounts []Account) (*EnvelopeV1, error) {
+	plain, err := json.Marshal(accounts)
 	if err != nil {
 		return nil, err
 	}
