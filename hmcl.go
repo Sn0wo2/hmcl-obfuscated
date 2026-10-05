@@ -19,7 +19,7 @@ var key = []byte{
 	0x84, 0x07, 0x5a, 0x9e, 0xbd, 0xc8, 0xd1, 0xeb,
 }
 
-type HMCLEnvelopeV1 struct {
+type EnvelopeV1 struct {
 	Schema     string          `json:"$schema,omitempty"`
 	Protection string          `json:"protection"`
 	Payload    json.RawMessage `json:"payload"`
@@ -27,7 +27,7 @@ type HMCLEnvelopeV1 struct {
 }
 
 // Decrypt 会将解密后的内容填充到 e.Payload 中, 同时 e.Protection 为"plain"
-func (e *HMCLEnvelopeV1) Decrypt() error {
+func (e *EnvelopeV1) Decrypt() error {
 	if e.Protection != "hmcl-obfuscated-v1" {
 		return fmt.Errorf("payload must be decrypted")
 	}
@@ -82,7 +82,7 @@ func (e *HMCLEnvelopeV1) Decrypt() error {
 }
 
 // Encrypt 会将 e.Payload 中的内容加密到 e.Payload 中, 同时 e.Protection 为"hmcl-obfuscated-v1"
-func (e *HMCLEnvelopeV1) Encrypt() error {
+func (e *EnvelopeV1) Encrypt() error {
 	if e.Protection != "plain" {
 		return fmt.Errorf("payload must be encrypted")
 	}
