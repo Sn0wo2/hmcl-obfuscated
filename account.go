@@ -3,26 +3,30 @@ package hmcl
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 
 	"golang.org/x/crypto/chacha20poly1305"
 )
 
 type Account struct {
-	AccountID   string      `json:"accountID"`
-	PrivateData PrivateData `json:"privateData"`
+	AccountID   string         `json:"accountID"`
+	PrivateData PrivateData    `json:"privateData"`
+	Extra       jsontext.Value `json:",embed"`
 }
 
 type PrivateData struct {
-	ProfileName  string `json:"profileName"`
-	TokenType    string `json:"tokenType"`
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
-	NotAfter     int64  `json:"notAfter"`
-	UserID       string `json:"userid"`
+	ProfileName  *string        `json:"profileName,omitzero"`
+	TokenType    *string        `json:"tokenType,omitzero"`
+	AccessToken  *string        `json:"accessToken,omitzero"`
+	RefreshToken *string        `json:"refreshToken,omitzero"`
+	NotAfter     *int64         `json:"notAfter,omitzero"`
+	UserID       *string        `json:"userid,omitzero"`
+	Extra        jsontext.Value `json:",embed"`
 }
 
-func (a Account) Encrypt(marshaler func(any) ([]byte, error)) (*EnvelopeV1, error) {
-	plain, err := marshaler([]Account{a})
+func (a Account) Encrypt() (*EnvelopeV1, error) {
+	plain, err := json.Marshal([]Account{a})
 	if err != nil {
 		return nil, err
 	}

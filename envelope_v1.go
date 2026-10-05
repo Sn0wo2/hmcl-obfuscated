@@ -2,7 +2,8 @@ package hmcl
 
 import (
 	"encoding/base64"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"fmt"
 	"math/bits"
 	"strings"
@@ -11,10 +12,11 @@ import (
 )
 
 type EnvelopeV1 struct {
-	Schema     string            `json:"$schema,omitempty"`
-	Protection string            `json:"protection"`
-	Payload    []*string `json:"payload"`
-	Nonce      string            `json:"nonce,omitempty"`
+	Schema     string         `json:"$schema"`
+	Protection string         `json:"protection"`
+	Payload    []*string      `json:"payload"`
+	Nonce      string         `json:"nonce"`
+	Extra      jsontext.Value `json:",embed"`
 }
 
 func (e *EnvelopeV1) Decrypt() ([]Account, error) {
