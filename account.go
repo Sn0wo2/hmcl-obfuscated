@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"encoding/json/jsontext"
-	"encoding/json/v2"
 
 	"golang.org/x/crypto/chacha20poly1305"
 )
@@ -25,8 +24,8 @@ type PrivateData struct {
 	Extra        jsontext.Value `json:",embed"`
 }
 
-func Encrypt(accounts []Account) (*EnvelopeV1, error) {
-	plain, err := json.Marshal(accounts)
+func Encrypt(accounts []Account, marshal func(any) ([]byte, error)) (*EnvelopeV1, error) {
+	plain, err := marshal(accounts)
 	if err != nil {
 		return nil, err
 	}
@@ -52,11 +51,16 @@ func Encrypt(accounts []Account) (*EnvelopeV1, error) {
 
 		payload[(i+1)*64-1] = &lane
 	}
+	data, err := marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	encodedNonce := base64.StdEncoding.EncodeToString(nonce)
 
 	return &EnvelopeV1{
 		Schema:     "https://schemas.glavo.site/hmcl/account-private-data/1.0.0",
 		Protection: "hmcl-obfuscated-v1",
-		Payload:    payload,
-		Nonce:      base64.StdEncoding.EncodeToString(nonce),
+		Payload:    data,
+		Nonce:      &encodedNonce,
 	}, nil
 }
