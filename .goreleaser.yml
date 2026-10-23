@@ -3,9 +3,8 @@ version: 2
 builds:
   - skip: true
 
-source:
-  enabled: true
-  format: tar.gz
+checksum:
+  disable: true
 
 snapshot:
   version_template: "{{ .Version }}-next"

@@ -7,13 +7,12 @@ lint-fix:
 	golangci-lint run --fix
 
 test:
-	go test -race ./...
+	go test $(if $(filter 1,$(shell go env CGO_ENABLED)),-race) ./...
 
 build:
-	go build -trimpath ./...
+	go build ./...
 
 clean:
-	go clean
 	rm -rf dist
 
 security:
